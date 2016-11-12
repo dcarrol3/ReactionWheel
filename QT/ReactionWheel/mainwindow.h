@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "reactionwheelplatform.h"
+#include "reactionwheelplatform.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -24,9 +24,7 @@ private slots:
 private:
     ReactionWheelPlatform *rw;  // Project platform to grab data
     Ui::MainWindow *ui;
-    void displayMotorSpeed();
-    void displayDirection();
-    void displaySetDirection();
+    void displayGyro();
 };
 
 #endif // MAINWINDOW_H

@@ -3,20 +3,21 @@
 
 #include <pthread.h>
 #include <time.h>
+#include <iostream>
 
 #define DELAY_MS 50
 
 class ReactionWheelPlatform
 {
 public:
+    static int gyroX;
+    static int gyroY;
+    static int gyroZ;
     ReactionWheelPlatform();
-    int getSpeed() const;
-    int getCurrentAngle() const;
 
 private:
     pthread_t dataThread;
-    int currentAngle;
-    int speed;
+
     static void* gatherData(void*);
 };
 

@@ -17,8 +17,13 @@ SOURCES += main.cpp\
     reactionwheelplatform.cpp
 
 HEADERS  += mainwindow.h \
-    reactionwheelplatform.h
+    serial.h \
+    reactionwheelplatform.hpp\
+    json.hpp
 
 FORMS    += mainwindow.ui
 
 CONFIG += c++11
+
+LIBS += \
+       -lboost_system\

@@ -1,7 +1,7 @@
 # Makefile for SER-456
 # Doug Carroll
 # SER-456 Fall 2016
-# Setup for accel and serial
+# Setup for accel, serial and motorDrive
 
 FILENAME = accel
 
@@ -19,13 +19,16 @@ all: $(FILENAME).hex
 $(FILENAME).hex: $(FILENAME).elf
 	$(COPY) $(COPYFLAGS) $< $(TARGET).hex
 
-$(FILENAME).elf: $(FILENAME).o serial.o 
-	$(CC) -g -mmcu=$(CHIP) -o $@ $< serial.o
+$(FILENAME).elf: $(FILENAME).o serial.o motorDrive.o
+	$(CC) -g -mmcu=$(CHIP) -o $@ $< serial.o motorDrive.o
 
 $(FILENAME).o: $(FILENAME).c $(FILENAME).h
 	$(CC) $(CFLAGS) -mmcu=$(CHIP) -c -o $@ $<
 	
 serial.o: serial.c serial.h
+	$(CC) $(CFLAGS) -mmcu=$(CHIP) -c -o $@ $<
+
+motorDrive.o: motorDrive.c motorDrive.h
 	$(CC) $(CFLAGS) -mmcu=$(CHIP) -c -o $@ $<
 
 clean:

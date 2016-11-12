@@ -2,6 +2,7 @@
 #include <avr/io.h>
 #include "accel.h"
 #include "serial.h"
+#include "motorDrive.h"
 #include <util/delay.h> 
 #include <stdint.h>    
 
@@ -82,26 +83,28 @@ void reportData(uint8_t x, uint8_t y, uint8_t z) {
 	int8_t yVal = (int8_t)y;
 	int8_t zVal = (int8_t)z;
 
-	sendString("Gyro: ");
-	sprintf(str, "%d, %d, %d\r\n", xVal, yVal, zVal);
+	sprintf(str, "{\"gyroX\": %d, \"gyroY\": %d, \"gyroZ\": %d}\r\n", xVal, yVal, zVal);
 	sendString(str);
 }
 
 int main(){
 	initI2C();
-	initUSART();	
+	initUSART();
+	initMotor();	
 	bno055SetReg(BNO055_PWR_MODE_ADDR, 0); // Set power mode to read
 	bno055SetReg(BNO055_OPR_MODE_ADDR, 8); // Set operationg mode to ALL imu data
-
+	
+	setSpeed(50);
+		
 	while(1){
 		
 		// Get gyro values
 		uint8_t gyro_msbX = bno055ReadReg(BNO055_GYRO_DATA_X_MSB_ADDR);
-		uint8_t gyro_msbY = bno055ReadReg(BNO055_GYRO_DATA_Y_MSB_ADDR);
-		uint8_t gyro_msbZ = bno055ReadReg(BNO055_GYRO_DATA_Z_MSB_ADDR);
-		
+		uint8_t accel_msbX = bno055ReadReg(BNO055_ACCEL_DATA_X_MSB_ADDR);
+		uint8_t gravity_msbX = bno055ReadReg(BNO055_GRAVITY_DATA_X_MSB_ADDR);
+				
 	
-		reportData(gyro_msbX, gyro_msbY, gyro_msbZ);
+		reportData(gyro_msbX, accel_msbX, gravity_msbX);
 		
 		_delay_ms(50);
 		

@@ -8,11 +8,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->motorValue->setSegmentStyle(QLCDNumber::Flat);
-    ui->currentDir->setSegmentStyle(QLCDNumber::Flat);
+    ui->xAxis->setSegmentStyle(QLCDNumber::Flat);
+    ui->yAxis->setSegmentStyle(QLCDNumber::Flat);
+    ui->zAxis->setSegmentStyle(QLCDNumber::Flat);
     rw = new ReactionWheelPlatform();
     connect(ui->startButton, SIGNAL (released()),this, SLOT (handleStart()));
     connect(ui->stopButton, SIGNAL (released()),this, SLOT (handleStop()));
+
 }
 
 MainWindow::~MainWindow()
@@ -22,16 +24,13 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::update(){
-    displayMotorSpeed();
-    displayDirection();
+    displayGyro();
 }
 
-void MainWindow::displayMotorSpeed(){
-    ui->motorValue->display(rw->getSpeed());
-}
-
-void MainWindow::displayDirection(){
-    ui->currentDir->display(rw->getCurrentAngle());
+void MainWindow::displayGyro(){
+    ui->xAxis->display(ReactionWheelPlatform::gyroX);
+    ui->yAxis->display(ReactionWheelPlatform::gyroY);
+    ui->zAxis->display(ReactionWheelPlatform::gyroZ);
 }
 
 void MainWindow::handleStart(){

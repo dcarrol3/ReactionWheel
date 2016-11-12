@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>234</height>
+    <height>361</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,12 +27,12 @@
      <item alignment="Qt::AlignHCenter">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Tilt Angle</string>
+        <string>X Axis</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLCDNumber" name="currentDir">
+      <widget class="QLCDNumber" name="xAxis">
        <property name="styleSheet">
         <string notr="true">background-color: rgb(0, 0, 0);
 color: rgb(0, 255, 0);
@@ -55,12 +55,12 @@ color: rgb(0, 255, 0);
      <item alignment="Qt::AlignHCenter">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>MotorSpeed</string>
+        <string>Y Axis</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLCDNumber" name="motorValue">
+      <widget class="QLCDNumber" name="yAxis">
        <property name="styleSheet">
         <string notr="true">background-color: rgb(0, 0, 0);
 color: rgb(0, 255, 0);
@@ -74,7 +74,7 @@ color: rgb(0, 255, 0);
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>120</y>
+      <y>240</y>
       <width>222</width>
       <height>41</height>
      </rect>
@@ -94,6 +94,34 @@ color: rgb(0, 255, 0);
       <widget class="QPushButton" name="stopButton">
        <property name="text">
         <string>Stop</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>120</y>
+      <width>160</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Z Axis</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLCDNumber" name="zAxis">
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(0, 0, 0);
+color: rgb(0, 255, 0);
+</string>
        </property>
       </widget>
      </item>
