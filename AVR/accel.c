@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <avr/io.h>
-#include "accel.h"
 #include "serial.h"
-#include "motorDrive.h"
+#include "accel.h"
 #include <util/delay.h> 
-#include <stdint.h>    
+#include <stdint.h>
+#include <math.h>   
 
 
 void initI2C(void){
@@ -87,31 +87,11 @@ void reportData(uint8_t x, uint8_t y, uint8_t z) {
 	sendString(str);
 }
 
-int main(){
-	initI2C();
-	initUSART();
-	initMotor();	
-	bno055SetReg(BNO055_PWR_MODE_ADDR, 0); // Set power mode to read
-	bno055SetReg(BNO055_OPR_MODE_ADDR, 8); // Set operationg mode to ALL imu data
-	
-	setSpeed(50);
-		
-	while(1){
-		
-		// Get gyro values
-		uint8_t gyro_msbX = bno055ReadReg(BNO055_GYRO_DATA_X_MSB_ADDR);
-		uint8_t accel_msbX = bno055ReadReg(BNO055_ACCEL_DATA_X_MSB_ADDR);
-		uint8_t gravity_msbX = bno055ReadReg(BNO055_GRAVITY_DATA_X_MSB_ADDR);
-				
-	
-		reportData(gyro_msbX, accel_msbX, gravity_msbX);
-		
-		_delay_ms(50);
-		
-	}
-	
-	return 0;
+float tilt_angle(int8_t x, int8_t y){
+	return atan2(x, y);
 }
+
+
 
 
 
