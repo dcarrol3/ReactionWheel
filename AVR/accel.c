@@ -76,12 +76,12 @@ uint8_t bno055ReadReg(uint8_t reg) {
 }
 
 // Send data to UART
-void reportData(uint8_t x, uint8_t y, uint8_t z) {
+void reportData(int16_t x, int16_t y, int16_t z) {
 	char str[128];
 	// Convert to signed
-	int8_t xVal = (int8_t)x;
-	int8_t yVal = (int8_t)y;
-	int8_t zVal = (int8_t)z;
+	int16_t xVal = (int16_t)x;
+	int16_t yVal = (int16_t)y;
+	int16_t zVal = (int16_t)z;
 
 	sprintf(str, "{\"gyroX\": %d, \"gyroY\": %d, \"gyroZ\": %d}\r\n", xVal, yVal, zVal);
 	sendString(str);

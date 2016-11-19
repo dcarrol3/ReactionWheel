@@ -4,13 +4,27 @@
  */
 
 #include "serial.h"
+#include <stdio.h>
 #include <avr/io.h>
 #include <avr/power.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>     
 #include <util/setbaud.h>
 #include <string.h>
 
 #define STRING_LEN 128
+
+// Receive interrupt - UDR0 is data byte
+ISR(USART_RX_vect){
+	char data = UDR0;
+	
+	if(data == ON){
+		runState = ON;
+	}
+	else {
+		runState = OFF;
+	}
+}
 
 void initUSART(){
 	UBRR0H = UBRRH_VALUE;
@@ -23,11 +37,13 @@ void initUSART(){
 	UCSR0A &= ~(1 << U2X0);
 	#endif
 	
-	// Transmit enable - Load UCSRnB register.
-	UCSR0B = (1 << TXEN0) | (1 << RXEN0);
+	// Transmit enable - Load UCSRnB register - enable interrupt on receive
+	UCSR0B = (1 << TXEN0) | (1 << RXEN0) | (1<<RXCIE0);
 	// USART mode settings - Load UCSRnC register.
 	UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
 	
+	// Enable interrupt
+	sei();
 }
 
 void transmit(uint8_t data){

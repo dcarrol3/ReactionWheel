@@ -15,6 +15,11 @@
 // Communication rate in bits per second.
 #define BAUD 9600
 
+#define ON '1'
+#define OFF '0'
+
+extern uint8_t runState;
+
 // Initialize the USART
 void initUSART();
 // Send a byte

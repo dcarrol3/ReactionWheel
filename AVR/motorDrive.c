@@ -1,6 +1,8 @@
 #include <avr/io.h>
 #include "motorDrive.h"
 
+uint8_t motorState = CW;
+
 void initMotor(void){
 	// Enable output pin for direction
 	DDRC |= (1 << DDC0);
@@ -11,21 +13,37 @@ void initMotor(void){
 	// Enable non-inverting mode
 	TCCR0A |= (1 << COM0A1);
 	// Enable phase-corrected pwm mode
-    TCCR0A |= (1 << WGM01) | (1 << WGM00);
+    TCCR0A |= (1 << WGM02) | (1 << WGM00);
     // Set prescaler to clock/8
-    TCCR0B |= (1 << CS01);
+    TCCR0B |= (1 << CS00);
+    
+    clockwise();
 }
 
 void counterClockwise(void){
-	// High
-	PORTC |= (1 << PIN_NUM);
+	if(motorState == CW){
+		motorState = CCW;
+		PORTC |= (1 << PIN_NUM); // High
+	}
 }
 
 void clockwise(void){
-	// Low
-	PORTC &= ~(1 << PIN_NUM);
+	if(motorState == CCW){
+		motorState = CW;
+		PORTC &= ~(1 << PIN_NUM); // Low
+	}
 }
 
 void setSpeed(uint8_t spd){
 	OCR0A = spd;
+}
+
+void hardStop(){
+	if(motorState == CW){
+		counterClockwise();
+	}
+	else{
+		clockwise();
+	}
+	setSpeed(0);
 }
