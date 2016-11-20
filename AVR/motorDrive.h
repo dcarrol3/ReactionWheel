@@ -3,7 +3,6 @@
 #ifndef motorDrive_h_
 #define motorDrive_h_
 
-#define PIN_NUM 0	// C pin number
 #define CW 0
 #define CCW 1
 

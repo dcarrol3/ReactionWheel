@@ -9,21 +9,22 @@
 
 // Max PWM - No idea why 253-255 do not work!
 #define MAX_PWM 252.0f
+// Center error
+#define CENTER 0.0f
 // Floating point absolute value
 #define ABS(x) ((x) > 0 ? (x) : -(x)) 
 // Chip ON/OFF
 uint8_t runState = OFF;
+int16_t eulerRoll = 0;
 
 // Correct direction
 uint8_t correctPWMValue(float val){
-	// If pid is negative and wheel is still in CW, change direction
-	if(val > 0 && motorState == CCW){
+	// If pid is negative and wheel is still moving CW, change direction
+	if(val > 0 && motorState == CW){
 		counterClockwise();
-		setSpeed(MAX_PWM);
 	}
-	else if(val < 0 && motorState == CW){
+	else if(val < 0 && motorState == CCW){
 		clockwise();
-		setSpeed(MAX_PWM);
 	}
 	
 	return (uint8_t)ABS(val);
@@ -32,15 +33,16 @@ uint8_t correctPWMValue(float val){
 int main(){
 	pid_controller_t pid;
 	
-	// PID tuning
-	pid_controller_init(&pid, 205.0f, 0.0f, 0);
+	// PID tuning. Params: Proportional - Integral - Derivative
+	pid_controller_init(&pid, 200.0f, 1.2f, 0);
 
-	float dt = 0.1f;
+	float dt = 1.0f;
 	float min = -MAX_PWM;
 	float max = MAX_PWM;
 	uint8_t spd = 0;
 	float error = 0.0f;
 	float control = 0.0f;
+	int16_t prevEulerRoll = 0;
 
 	initI2C();
 	initUSART();
@@ -57,11 +59,17 @@ int main(){
 			// Get Eurler MSb
 			int16_t eulerRollMSB = bno055ReadReg(BNO055_EULER_R_MSB_ADDR);
 			// Add MSB and LSB, divide by 16 to get degrees
-			int16_t eulerRoll = ((eulerRollMSB << 8) | eulerRollLSB);
-
+			eulerRoll = ((eulerRollMSB << 8) | eulerRollLSB);
+			
+			// Gyro
+			int8_t gyroRollMSB = bno055ReadReg(BNO055_GYRO_DATA_Z_LSB_ADDR);
+			
+			// Check for euler spikes
+			eulerRoll = eulerRoll < 255 && eulerRoll > -255 ? eulerRoll : prevEulerRoll;
+			
 			reportData(eulerRoll, motorState, control);
-			// TODO - Change for direction of use
-			error = (float) eulerRoll / 16.0f;
+
+			error = CENTER - ((float) eulerRoll / 16.0f);
 			control = pid_update(
 				&pid,
 				error, 
@@ -72,17 +80,22 @@ int main(){
 				0.0f
 			);
 			
+			// Gyro adjustment
+			
+			control = control + ((float) gyroRollMSB * 0.0f);
+			control = control > MAX_PWM ? MAX_PWM : control;
+			control = control < -MAX_PWM ? -MAX_PWM : control;
+			
+
+			prevEulerRoll = eulerRoll;
 			
 			// Correct PWM value and update motor speed
 			spd = correctPWMValue(control);
 			setSpeed(spd);
         }
         else{
-			setSpeed(0);
-		}
-			
-		_delay_ms(10);
-		
+			setSpeed(30);
+		}		
 	}
 
 	return 0;
