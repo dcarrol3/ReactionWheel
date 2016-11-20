@@ -33,8 +33,8 @@ void clockwise(void){
 
 void setSpeed(uint8_t spd){
 	if(motorState == CW){
-		OCR0B = 0;
 		OCR0A = spd;
+		OCR0B = 0;
 	}
 	else{
 		OCR0A = 0;
