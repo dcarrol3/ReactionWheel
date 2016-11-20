@@ -4,9 +4,6 @@
 uint8_t motorState = CW;
 
 void initMotor(void){
-	// Enable output pin for direction
-	DDRC |= (1 << DDC0) | (1 << DDC1);
-	//PORTC |= (1 << 1); // 1 High	
 	// Enable PWM output on D5 and D6
     DDRD |= (1 << DDD6) | (1 << DDD5);
 	// PWM to 0% duty cycle initally
@@ -17,7 +14,7 @@ void initMotor(void){
 	// Enable phase-corrected pwm mode
     TCCR0A |= (1 << WGM02) | (1 << WGM00);
     // Set prescaler to clock/8
-    TCCR0B |= (1 << CS02);
+    TCCR0B |= (1 << CS00);
     
     clockwise();
 }

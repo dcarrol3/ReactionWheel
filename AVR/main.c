@@ -20,10 +20,10 @@ int16_t eulerRoll = 0;
 // Correct direction
 uint8_t correctPWMValue(float val){
 	// If pid is negative and wheel is still moving CW, change direction
-	if(val > 0 && motorState == CW){
+	if(eulerRoll < 0 && motorState == CW){
 		counterClockwise();
 	}
-	else if(val < 0 && motorState == CCW){
+	else if(eulerRoll > 0 && motorState == CCW){
 		clockwise();
 	}
 	
@@ -34,7 +34,7 @@ int main(){
 	pid_controller_t pid;
 	
 	// PID tuning. Params: Proportional - Integral - Derivative
-	pid_controller_init(&pid, 200.0f, 1.2f, 0);
+	pid_controller_init(&pid, 80.0f, 1.2f, 0);
 
 	float dt = 1.0f;
 	float min = -MAX_PWM;
@@ -82,7 +82,7 @@ int main(){
 			
 			// Gyro adjustment
 			
-			control = control + ((float) gyroRollMSB * 0.0f);
+			control = control + ((float) gyroRollMSB * 0.7f);
 			control = control > MAX_PWM ? MAX_PWM : control;
 			control = control < -MAX_PWM ? -MAX_PWM : control;
 			
@@ -94,7 +94,7 @@ int main(){
 			setSpeed(spd);
         }
         else{
-			setSpeed(30);
+			setSpeed(0);
 		}		
 	}
 
