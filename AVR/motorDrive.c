@@ -22,16 +22,12 @@ void initMotor(void){
 void counterClockwise(void){
 	if(motorState == CW){
 		motorState = CCW;
-		//PORTC &= ~(1 << 1); // 1 Low
-		//PORTC |= (1 << 0); // 0 High
 	}
 }
 
 void clockwise(void){
 	if(motorState == CCW){
 		motorState = CW;
-		//PORTC &= ~(1 << 0); // 0 Low
-		//PORTC |= (1 << 1); // 1 High	
 	}
 }
 
@@ -47,11 +43,6 @@ void setSpeed(uint8_t spd){
 }
 
 void hardStop(){
-	if(motorState == CW){
-		counterClockwise();
-	}
-	else{
-		clockwise();
-	}
-	setSpeed(0);
+	OCR0A = 0;
+	OCR0B = 0;
 }
