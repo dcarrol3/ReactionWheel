@@ -9,8 +9,6 @@
 
 // Max PWM - 253-255 do not work!
 #define MAX_PWM 252.0f
-// Center error
-#define CENTER 75.0f
 // Floating point absolute value
 #define ABS(x) ((x) > 0 ? (x) : -(x)) 
 // Dead zone to avoid unnessecary oscillation
@@ -18,6 +16,45 @@
 
 // Chip ON/OFF
 uint8_t runState = OFF;
+// Position to move: -179 to +180
+int32_t setAngle = 0;
+uint8_t buffer[4];
+volatile uint8_t dataDone = 0;
+
+
+void updateRunState(int32_t data){
+	if(data == ON){
+		runState = ON;
+	}
+	else if(data == OFF) {
+		runState = OFF;
+	}
+}
+
+// Change set point
+void updateSetAngle(){
+	int32_t temp = 0;
+	int32_t tempByte = 0;
+	if(dataDone){
+		// little endian
+		for(uint8_t i = 0; i < 4; i++){
+			tempByte = (int32_t) buffer[i];
+			temp |= tempByte << (i * 8);
+		}
+		// If it's out of bounds don't change
+		// Also update run state here as these must be out of bounds
+		if(temp > 180 || temp < -179){
+			updateRunState(temp);
+		}
+		else{
+			setAngle = temp;
+		}
+		dataDone = 0;
+	}
+}
+
+// Keep from spinning around
+
 
 // Correct PID on the fly using gyroscope
 void pidCorrection(int8_t gyro, float error, pid_controller_t *pid){
@@ -68,6 +105,7 @@ int main(){
 	float max = MAX_PWM;
 	float error = 0.0f;
 	float control = 0.0f;
+	float angle = 0.0f;
 	uint8_t spd = 0;
 	int16_t eulerYaw = 0;
 	int16_t eulerYawLSB = 0;
@@ -94,10 +132,12 @@ int main(){
 			
 			// Make yaw value go from -2880 to +2880 instead of 0 to 5760
 			eulerYaw = eulerYaw > 2880 ? -(5760 - eulerYaw)  : eulerYaw;
-			// Send data to desktop application			
-			reportData(eulerYaw, gyroMSB, control);
 			// Turn raw value into deg and subtract from set center
-			error = CENTER - ((float) eulerYaw / 16.0f);
+			angle = ((float) eulerYaw / 16.0f);
+			error = ((float) setAngle) - angle;
+			
+			// Send data to desktop application			
+			reportData(angle, motorState, control);
 			
 			// Correct PID on the fly
 			pidCorrection(gyroMSB, error, &pid);
@@ -126,8 +166,12 @@ int main(){
         }
         else{
 			pid_controller_reset(&pid);
+			//reportData(setAngle, motorState, control);
 			setSpeed(0);
-		}		
+		}
+		
+		updateSetAngle();
+		_delay_ms(1);		
 	}
 
 	return 0;

@@ -75,17 +75,6 @@ uint8_t bno055ReadReg(uint8_t reg) {
 	return tempByte;
 }
 
-// Send data to UART
-void reportData(int16_t x, int16_t y, int16_t z) {
-	char str[128];
-	// Convert to signed
-	int16_t xVal = (int16_t)x;
-	int16_t yVal = (int16_t)y;
-	int16_t zVal = (int16_t)z;
-
-	sprintf(str, "{\"gyroX\": %d, \"gyroY\": %d, \"gyroZ\": %d}\r\n", xVal, yVal, zVal);
-	sendString(str);
-}
 
 float tilt_angle(int8_t x, int8_t y){
 	return atan2(x, y);

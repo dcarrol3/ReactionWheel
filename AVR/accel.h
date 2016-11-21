@@ -163,7 +163,6 @@ typedef enum
 void initI2C(void);
 void bno055SetReg(uint8_t reg, uint8_t data);
 uint8_t bno055ReadReg(uint8_t reg);
-void reportData(int16_t x, int16_t y, int16_t z);
 float tilt_angle(int8_t x, int8_t y);
 
 #endif

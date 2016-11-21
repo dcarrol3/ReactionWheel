@@ -13,17 +13,22 @@
 #include <string.h>
 
 #define STRING_LEN 128
+uint8_t runTime = 0;
 
 // Receive interrupt - UDR0 is data byte
 ISR(USART_RX_vect){
-	char data = UDR0;
+	uint8_t data = UDR0;
+	dataDone = 1;
+	runTime = runTime + 1;
+	if(runTime == 4){
+		runTime = 0;
+		dataDone = 1;
+		buffer[3] = data;	
+	}
+	else{
+		buffer[runTime - 1] = data;	
+	}
 	
-	if(data == ON){
-		runState = ON;
-	}
-	else {
-		runState = OFF;
-	}
 }
 
 void initUSART(){
@@ -77,6 +82,18 @@ char * receiveString(){
 	transmit('\n');
 	
 	return ptr;
+}
+
+// Send data as JSON through UART
+void reportData(int16_t x, int16_t y, int16_t z) {
+	char str[128];
+	// Convert to signed
+	int16_t xVal = (int16_t)x;
+	int16_t yVal = (int16_t)y;
+	int16_t zVal = (int16_t)z;
+
+	sprintf(str, "{\"gyroX\": %d, \"gyroY\": %d, \"gyroZ\": %d}\r\n", xVal, yVal, zVal);
+	sendString(str);
 }
 
 void sendString(const char str[]){
