@@ -20,7 +20,8 @@ uint8_t runState = OFF;
 int32_t setAngle = 0;
 uint8_t buffer[4];
 volatile uint8_t dataDone = 0;
-
+uint8_t posFlag = 0;
+uint8_t negFlag = 0;
 
 void updateRunState(int32_t data){
 	if(data == ON){
@@ -52,9 +53,6 @@ void updateSetAngle(){
 		dataDone = 0;
 	}
 }
-
-// Keep from spinning around
-
 
 // Correct PID on the fly using gyroscope
 void pidCorrection(int8_t gyro, float error, pid_controller_t *pid){
@@ -98,7 +96,7 @@ int main(){
 	pid_controller_t pid;
 		
 	// PID tuning. Params: Proportional - Integral - Derivative
-	pid_controller_init(&pid, 1.5f, 1.0f, 0);
+	pid_controller_init(&pid, 1.5f, 1.0f, 0.025f);
 
 	float dt = 1.0f;
 	float min = -MAX_PWM;
@@ -166,7 +164,6 @@ int main(){
         }
         else{
 			pid_controller_reset(&pid);
-			//reportData(setAngle, motorState, control);
 			setSpeed(0);
 		}
 		
