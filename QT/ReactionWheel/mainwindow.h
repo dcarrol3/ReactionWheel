@@ -2,7 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QCloseEvent>
+#include <string>
 #include "reactionwheelplatform.hpp"
+#include "serial.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,11 +23,14 @@ public:
 private slots:
     void handleStart();
     void handleStop();
+    void sendAngle();
+    void closeEvent(QCloseEvent *event);
 
 private:
     ReactionWheelPlatform *rw;  // Project platform to grab data
     Ui::MainWindow *ui;
     void displayGyro();
+    Serial *serial;
 };
 
 #endif // MAINWINDOW_H

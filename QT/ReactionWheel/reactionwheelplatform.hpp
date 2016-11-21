@@ -10,9 +10,10 @@
 class ReactionWheelPlatform
 {
 public:
-    static int gyroX;
-    static int gyroY;
-    static int gyroZ;
+    static int angle;
+    static int motorDir;
+    static int motorSpd;
+    static int setAngle;
     ReactionWheelPlatform();
 
 private:

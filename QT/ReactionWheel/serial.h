@@ -24,8 +24,8 @@ public:
     }
 
     // Writes a string over serial
-    void writeString(std::string s){
-        boost::asio::write(serial,boost::asio::buffer(s.c_str(),s.size()));
+    void writeInt(int i){
+        boost::asio::write(serial,boost::asio::buffer(&i, 4));
     }
 
     // Boost api read function.
